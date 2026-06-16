@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>DNR 2026 — Perú y región</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #242424;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0f0f0;
+  --muted: #888;
+  --faint: #555;
+  --red: #ff4d4d;
+  --red-soft: rgba(255,77,77,0.12);
+  --green: #3ecf8e;
+  --green-soft: rgba(62,207,142,0.12);
+  --blue: #4a9eff;
+  --blue-soft: rgba(74,158,255,0.12);
+  --amber: #f5a623;
+  --amber-soft: rgba(245,166,35,0.12);
+  --purple: #a78bfa;
+  --purple-soft: rgba(167,139,250,0.12);
+  --r: 10px;
+  --r-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.5; }
+body { min-height: 100vh; padding-bottom: 2rem; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(15,15,15,0.95); backdrop-filter: blur(12px); border-bottom: 0.5px solid var(--border2); }
+.nav-header { padding: .75rem 1rem .5rem; }
+.nav-title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: .01em; }
+.nav-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.tabs { display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 1rem .75rem; gap: 6px; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex-shrink: 0; padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--border2); font-size: 13px; font-weight: 500; color: var(--muted); background: transparent; cursor: pointer; transition: all .15s; }
+.tab.active { background: var(--text); color: var(--bg); border-color: transparent; }
+
+/* PANELS */
+.panel { display: none; padding: 1rem; }
+.panel.active { display: block; }
+
+/* CARDS */
+.card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--r); padding: 1rem; margin-bottom: .75rem; }
+.card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: .875rem; }
+
+/* METRICS GRID */
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.metric { background: var(--surface2); border-radius: var(--r-sm); padding: .75rem; }
+.m-label { font-size: 11px; color: var(--muted); margin-bottom: .2rem; line-height: 1.3; }
+.m-val { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.m-delta { font-size: 11px; margin-top: .2rem; }
+.up { color: var(--green); }
+.down { color: var(--red); }
+.flat { color: var(--muted); }
+
+/* BARS */
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.bar-label { font-size: 12px; color: var(--muted); width: 100px; flex-shrink: 0; text-align: right; }
+.bar-label.bold { color: var(--text); font-weight: 600; }
+.bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width .4s ease; }
+.bar-val { font-size: 12px; font-weight: 600; width: 38px; flex-shrink: 0; color: var(--text); }
+.bar-val.down { color: var(--red); }
+.bar-val.up { color: var(--green); }
+
+/* BADGES */
+.badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+.badge-red { background: var(--red-soft); color: var(--red); }
+.badge-green { background: var(--green-soft); color: var(--green); }
+.badge-blue { background: var(--blue-soft); color: var(--blue); }
+.badge-amber { background: var(--amber-soft); color: var(--amber); }
+.badge-purple { background: var(--purple-soft); color: var(--purple); }
+
+/* SECTION LABEL */
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin: 1.25rem 0 .625rem; }
+
+/* TRUST BARS */
+.trust-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.trust-name { font-size: 12px; color: var(--muted); width: 140px; flex-shrink: 0; }
+.trust-name.top { color: var(--text); font-weight: 600; }
+.trust-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.trust-fill { height: 100%; border-radius: 3px; }
+.trust-pct { font-size: 12px; font-weight: 600; width: 30px; text-align: right; color: var(--text); }
+
+/* COUNTRY SUBTABS */
+.subtabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+.subtab { padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border2); font-size: 12px; font-weight: 500; color: var(--muted); background: transparent; cursor: pointer; }
+.subtab.active { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+.subpanel { display: none; }
+.subpanel.active { display: block; }
+
+/* QUESTIONS */
+.q-block { padding: .75rem 0; border-bottom: 0.5px solid var(--border); }
+.q-block:last-child { border-bottom: none; }
+.q-n { font-size: 11px; font-weight: 700; color: var(--faint); margin-bottom: .2rem; }
+.q-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+/* GLOBAL STAT */
+.gstat { background: var(--surface2); border-radius: var(--r-sm); padding: .75rem; margin-bottom: .5rem; }
+.gstat-label { font-size: 11px; color: var(--muted); margin-bottom: .2rem; }
+.gstat-val { font-size: 19px; font-weight: 700; color: var(--text); }
+.gstat-note { font-size: 11px; color: var(--muted); margin-top: .15rem; line-height: 1.4; }
+
+/* CONTEXT */
+.context { border-left: 2px solid var(--blue); padding: .5rem .875rem; margin-bottom: .75rem; }
+.context-tag { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); margin-bottom: .3rem; }
+.context-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.context.red { border-color: var(--red); }
+.context.red .context-tag { color: var(--red); }
+.context.amber { border-color: var(--amber); }
+.context.amber .context-tag { color: var(--amber); }
+.context.green { border-color: var(--green); }
+.context.green .context-tag { color: var(--green); }
+.context.purple { border-color: var(--purple); }
+.context.purple .context-tag { color: var(--purple); }
+
+/* FOOTER */
+.foot { font-size: 11px; color: var(--faint); line-height: 1.6; margin-top: .875rem; }
+
+/* RSF */
+.rsf-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.rsf-c { font-size: 12px; width: 65px; flex-shrink: 0; color: var(--muted); }
+.rsf-c.top { color: var(--text); font-weight: 600; }
+.rsf-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.rsf-fill { height: 100%; border-radius: 3px; }
+.rsf-s { font-size: 12px; font-weight: 600; width: 34px; }
+.rsf-p { font-size: 11px; color: var(--faint); width: 44px; }
+
+/* DISCO highlight */
+.highlight-box { background: var(--red-soft); border: 0.5px solid rgba(255,77,77,0.25); border-radius: var(--r-sm); padding: .625rem .875rem; margin-bottom: .625rem; }
+.highlight-box.blue { background: var(--blue-soft); border-color: rgba(74,158,255,0.25); }
+.highlight-box.green { background: var(--green-soft); border-color: rgba(62,207,142,0.25); }
+.hb-val { font-size: 22px; font-weight: 700; }
+.hb-label { font-size: 12px; color: var(--muted); margin-top: .1rem; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-header">
+    <div class="nav-title">Digital News Report 2026 — Perú</div>
+    <div class="nav-sub">Reuters Institute · 48 mercados · n = 2,022 en Perú</div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'peru')">Perú</button>
+    <button class="tab" onclick="switchTab(this,'region')">Región</button>
+    <button class="tab" onclick="switchTab(this,'global')">Global</button>
+    <button class="tab" onclick="switchTab(this,'contexto')">Contexto</button>
+    <button class="tab" onclick="switchTab(this,'preguntas')">Preguntas</button>
+  </div>
+</div>
+
+<!-- PERÚ -->
+<div id="panel-peru" class="panel active">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem;flex-wrap:wrap;gap:.5rem">
+    <span class="badge badge-red">Año electoral 2026</span>
+    <span style="font-size:11px;color:var(--muted)">RSF pos. 144 / 180</span>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="m-label">Confianza en noticias</div>
+      <div class="m-val" style="color:var(--red)">32%</div>
+      <div class="m-delta down">↓ 8pp · mínimo histórico</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">IA chatbots para noticias</div>
+      <div class="m-val" style="color:var(--green)">11%</div>
+      <div class="m-delta up">↑ 5pp · 6.° global</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Pagan por noticias</div>
+      <div class="m-val">14%</div>
+      <div class="m-delta down">↓ 4pp</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Evitan noticias</div>
+      <div class="m-val">38%</div>
+      <div class="m-delta flat">↓ 1pp</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Social = fuente principal sub-35</div>
+      <div class="m-val" style="color:var(--amber)">49%</div>
+      <div class="m-delta flat">6,7M votantes 18–29</div>
+    </div>
+    <div class="metric">
+      <div class="m-label">Dependen de creadores</div>
+      <div class="m-val">23%</div>
+      <div class="m-delta flat">vs 13% global</div>
+    </div>
+  </div>
+
+  <div class="section-label">Redes sociales para noticias</div>
+  <div class="card">
+    <div class="bar-row"><span class="bar-label bold">Facebook</span><div class="bar-track"><div class="bar-fill" style="width:61%;background:var(--blue)"></div></div><span class="bar-val up">61%</span></div>
+    <div class="bar-row"><span class="bar-label">TikTok</span><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--green)"></div></div><span class="bar-val up">45%</span></div>
+    <div class="bar-row"><span class="bar-label">WhatsApp</span><div class="bar-track"><div class="bar-fill" style="width:41%;background:var(--green)"></div></div><span class="bar-val up">41%</span></div>
+    <div class="bar-row"><span class="bar-label">YouTube</span><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--blue)"></div></div><span class="bar-val">40%</span></div>
+    <div class="bar-row"><span class="bar-label">Instagram</span><div class="bar-track"><div class="bar-fill" style="width:27%;background:var(--purple)"></div></div><span class="bar-val">27%</span></div>
+    <div style="display:flex;gap:6px;margin-top:.625rem;flex-wrap:wrap">
+      <span class="badge badge-green">TikTok +12pp</span>
+      <span class="badge badge-green">WhatsApp +12pp</span>
+      <span class="badge badge-blue">Facebook +9pp</span>
+    </div>
+  </div>
+
+  <div class="section-label">Confianza por marca</div>
+  <div class="card">
+    <div class="trust-row"><span class="trust-name top">RPP Noticias</span><div class="trust-track"><div class="trust-fill" style="width:64%;background:var(--blue)"></div></div><span class="trust-pct">64%</span></div>
+    <div class="trust-row"><span class="trust-name top">El Peruano</span><div class="trust-track"><div class="trust-fill" style="width:63%;background:var(--blue)"></div></div><span class="trust-pct">63%</span></div>
+    <div class="trust-row"><span class="trust-name">El Comercio</span><div class="trust-track"><div class="trust-fill" style="width:56%;background:var(--blue)"></div></div><span class="trust-pct">56%</span></div>
+    <div class="trust-row"><span class="trust-name">La República</span><div class="trust-track"><div class="trust-fill" style="width:55%;background:var(--blue)"></div></div><span class="trust-pct">55%</span></div>
+    <div class="trust-row"><span class="trust-name">Latina Noticias</span><div class="trust-track"><div class="trust-fill" style="width:56%;background:var(--blue)"></div></div><span class="trust-pct">56%</span></div>
+    <div class="trust-row"><span class="trust-name" style="color:var(--red)">Willax TV</span><div class="trust-track"><div class="trust-fill" style="width:45%;background:#555"></div></div><span class="trust-pct">45%</span></div>
+    <div class="trust-row"><span class="trust-name" style="color:var(--red)">Trome</span><div class="trust-track"><div class="trust-fill" style="width:35%;background:var(--red)"></div></div><span class="trust-pct" style="color:var(--red)">35%</span></div>
+    <p style="font-size:12px;color:var(--muted);margin-top:.75rem;line-height:1.5">Paradoja: la confianza general cae al mínimo (32%), pero la mayoría de marcas individuales supera el 50% entre quienes las conocen.</p>
+  </div>
+
+  <div class="foot">Fuente: DNR 2026 · Sección 3.33 Perú · Análisis: Lourdes M. Cueva Chacón, SDSU</div>
+</div>
+
+<!-- REGIÓN -->
+<div id="panel-region" class="panel">
+  <div class="subtabs">
+    <button class="subtab active" onclick="switchSub(this,'comp')">Comparativa</button>
+    <button class="subtab" onclick="switchSub(this,'brasil')">Brasil</button>
+    <button class="subtab" onclick="switchSub(this,'colombia')">Colombia</button>
+    <button class="subtab" onclick="switchSub(this,'chile')">Chile</button>
+  </div>
+
+  <div id="sub-comp" class="subpanel active">
+    <div class="section-label">Confianza general en noticias 2026</div>
+    <div class="card">
+      <div class="bar-row"><span class="bar-label">Chile</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--green)"></div></div><span class="bar-val">34%</span></div>
+      <div class="bar-row"><span class="bar-label">Brasil</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--green)"></div></div><span class="bar-val">36%</span></div>
+      <div class="bar-row"><span class="bar-label" style="color:var(--faint)">Global avg</span><div class="bar-track"><div class="bar-fill" style="width:92.5%;background:#555"></div></div><span class="bar-val flat">37%</span></div>
+      <div class="bar-row"><span class="bar-label bold">Perú</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--red)"></div></div><span class="bar-val down">32%</span></div>
+      <div class="bar-row"><span class="bar-label" style="color:var(--red)">Colombia</span><div class="bar-track"><div class="bar-fill" style="width:62.5%;background:var(--red)"></div></div><span class="bar-val down">25%</span></div>
+    </div>
+
+    <div class="section-label">Caída de confianza 2025→2026</div>
+    <div class="card">
+      <div class="bar-row"><span class="bar-label">Chile</span><div class="bar-track"><div class="bar-fill" style="width:20%;background:#555"></div></div><span class="bar-val flat">↓ 2pp</span></div>
+      <div class="bar-row"><span class="bar-label">Brasil</span><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--amber)"></div></div><span class="bar-val">↓ 6pp</span></div>
+      <div class="bar-row"><span class="bar-label">Colombia</span><div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--red)"></div></div><span class="bar-val down">↓ 7pp</span></div>
+      <div class="bar-row"><span class="bar-label bold">Perú</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--red)"></div></div><span class="bar-val down">↓ 8pp</span></div>
+    </div>
+
+    <div class="section-label">IA chatbots para noticias</div>
+    <div class="card">
+      <div class="bar-row"><span class="bar-label">Chile</span><div class="bar-track"><div class="bar-fill" style="width:54%;background:#555"></div></div><span class="bar-val flat">7% +3pp</span></div>
+      <div class="bar-row"><span class="bar-label">Colombia</span><div class="bar-track"><div class="bar-fill" style="width:69%;background:var(--green)"></div></div><span class="bar-val">9% +3pp</span></div>
+      <div class="bar-row"><span class="bar-label bold">Perú</span><div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--green)"></div></div><span class="bar-val up">11% +5pp</span></div>
+      <div class="bar-row"><span class="bar-label">Brasil</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div><span class="bar-val up">13% +4pp</span></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.5rem">Global: 10%. EE.UU.: 6%, Alemania: 5%, UK: 4%.</p>
+    </div>
+
+    <div class="section-label">Evitan las noticias</div>
+    <div class="card">
+      <div class="bar-row"><span class="bar-label bold">Perú</span><div class="bar-track"><div class="bar-fill" style="width:77.5%;background:#555"></div></div><span class="bar-val flat">38% ↓1pp</span></div>
+      <div class="bar-row"><span class="bar-label">Chile</span><div class="bar-track"><div class="bar-fill" style="width:91.8%;background:var(--amber)"></div></div><span class="bar-val">45% ↓1pp</span></div>
+      <div class="bar-row"><span class="bar-label">Brasil</span><div class="bar-track"><div class="bar-fill" style="width:95.9%;background:var(--amber)"></div></div><span class="bar-val">47% ↑1pp</span></div>
+      <div class="bar-row"><span class="bar-label">Colombia</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--red)"></div></div><span class="bar-val down">49% ↑5pp</span></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.5rem">Global: 42%.</p>
+    </div>
+
+    <div class="section-label">Libertad de prensa RSF 2026</div>
+    <div class="card">
+      <div class="rsf-row"><span class="rsf-c">Brasil</span><div class="rsf-track"><div class="rsf-fill" style="width:83%;background:var(--green)"></div></div><span class="rsf-s" style="color:var(--green)">66.37</span><span class="rsf-p">pos. 52</span></div>
+      <div class="rsf-row"><span class="rsf-c">Chile</span><div class="rsf-track"><div class="rsf-fill" style="width:76%;background:var(--green)"></div></div><span class="rsf-s" style="color:var(--green)">60.84</span><span class="rsf-p">pos. 70</span></div>
+      <div class="rsf-row"><span class="rsf-c">Colombia</span><div class="rsf-track"><div class="rsf-fill" style="width:65%;background:var(--amber)"></div></div><span class="rsf-s" style="color:var(--amber)">51.66</span><span class="rsf-p">pos. 102</span></div>
+      <div class="rsf-row"><span class="rsf-c top">Perú</span><div class="rsf-track"><div class="rsf-fill" style="width:47%;background:var(--red)"></div></div><span class="rsf-s" style="color:var(--red)">37.86</span><span class="rsf-p" style="color:var(--red)">pos. 144</span></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.5rem">4 periodistas asesinados en Perú en 2025 + 454 ataques registrados por la ANP.</p>
+    </div>
+  </div>
+
+  <div id="sub-brasil" class="subpanel">
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Confianza</div><div class="m-val" style="color:var(--amber)">36%</div><div class="m-delta down">↓ 6pp · mínimo 12 años</div></div>
+      <div class="metric"><div class="m-label">IA para noticias</div><div class="m-val" style="color:var(--green)">13%</div><div class="m-delta up">↑ 4pp</div></div>
+      <div class="metric"><div class="m-label">Evitan noticias</div><div class="m-val">47%</div><div class="m-delta down">↑ 1pp</div></div>
+      <div class="metric"><div class="m-label">Pagan</div><div class="m-val">15%</div><div class="m-delta down">↓ 2pp</div></div>
+    </div>
+    <div class="section-label">Redes sociales para noticias</div>
+    <div class="card">
+      <div class="bar-row"><span class="bar-label">Instagram</span><div class="bar-track"><div class="bar-fill" style="width:98%;background:var(--purple)"></div></div><span class="bar-val up">49% +12pp</span></div>
+      <div class="bar-row"><span class="bar-label">WhatsApp</span><div class="bar-track"><div class="bar-fill" style="width:92%;background:var(--green)"></div></div><span class="bar-val up">46% +10pp</span></div>
+      <div class="bar-row"><span class="bar-label">YouTube</span><div class="bar-track"><div class="bar-fill" style="width:84%;background:var(--blue)"></div></div><span class="bar-val">42% +5pp</span></div>
+      <div class="bar-row"><span class="bar-label">Facebook</span><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--blue)"></div></div><span class="bar-val">30% +2pp</span></div>
+      <div class="bar-row"><span class="bar-label">TikTok</span><div class="bar-track"><div class="bar-fill" style="width:42%;background:var(--green)"></div></div><span class="bar-val">21% +3pp</span></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.5rem">Diferencia clave con Perú: Brasil lidera con Instagram (49%), Perú con Facebook (61%).</p>
+    </div>
+    <div class="card">
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Arresto de Bolsonaro y polarización preelectoral contribuyen a caída de confianza. Digital = 40.6% de publicidad vs TV = 41.3%. Folha de S. Paulo demandó a OpenAI, luego llegó a acuerdo comercial. 33% del público obtiene noticias de creadores. Ley regula "profesional multimedia" (influencer) generando debate en sindicatos de periodistas.</p>
+    </div>
+  </div>
+
+  <div id="sub-colombia" class="subpanel">
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Confianza</div><div class="m-val" style="color:var(--red)">25%</div><div class="m-delta down">↓ 7pp</div></div>
+      <div class="metric"><div class="m-label">IA para noticias</div><div class="m-val">9%</div><div class="m-delta up">↑ 3pp</div></div>
+      <div class="metric"><div class="m-label">Evitan noticias</div><div class="m-val" style="color:var(--red)">49%</div><div class="m-delta down">↑ 5pp</div></div>
+      <div class="metric"><div class="m-label">Creadores sub-24</div><div class="m-val">40%</div><div class="m-delta flat">siguen creadores</div></div>
+    </div>
+    <div class="section-label">Redes sociales para noticias</div>
+    <div class="card">
+      <div class="bar-row"><span class="bar-label">Facebook</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--blue)"></div></div><span class="bar-val">51% +4pp</span></div>
+      <div class="bar-row"><span class="bar-label">WhatsApp</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--green)"></div></div><span class="bar-val up">46% +11pp</span></div>
+      <div class="bar-row"><span class="bar-label">YouTube</span><div class="bar-track"><div class="bar-fill" style="width:78%;background:var(--blue)"></div></div><span class="bar-val">40% +6pp</span></div>
+      <div class="bar-row"><span class="bar-label">Instagram</span><div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--purple)"></div></div><span class="bar-val">33% +5pp</span></div>
+      <div class="bar-row"><span class="bar-label">TikTok</span><div class="bar-track"><div class="bar-fill" style="width:63%;background:var(--green)"></div></div><span class="bar-val">32% +5pp</span></div>
+    </div>
+    <div class="card">
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">La confianza en Colombia (25%) es una de las más bajas del mundo. El presidente Petro concedió entrevista a un streamer en la residencia presidencial. 35% depende de creadores. La Silla Vacía lanza SillaIA. Radio en reestructuración profunda: RCN consolida bajo La FM, Caracol absorbe W Radio.</p>
+    </div>
+  </div>
+
+  <div id="sub-chile" class="subpanel">
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Confianza</div><div class="m-val">34%</div><div class="m-delta down">↓ 2pp</div></div>
+      <div class="metric"><div class="m-label">IA para noticias</div><div class="m-val">7%</div><div class="m-delta up">↑ 3pp</div></div>
+      <div class="metric"><div class="m-label">Evitan noticias</div><div class="m-val">45%</div><div class="m-delta down">↓ 1pp</div></div>
+      <div class="metric"><div class="m-label">Pagan</div><div class="m-val">10%</div><div class="m-delta flat">=</div></div>
+    </div>
+    <div class="section-label">Redes sociales para noticias</div>
+    <div class="card">
+      <div class="bar-row"><span class="bar-label">Facebook</span><div class="bar-track"><div class="bar-fill" style="width:87%;background:var(--blue)"></div></div><span class="bar-val">44% +4pp</span></div>
+      <div class="bar-row"><span class="bar-label">Instagram</span><div class="bar-track"><div class="bar-fill" style="width:81%;background:var(--purple)"></div></div><span class="bar-val">41% +9pp</span></div>
+      <div class="bar-row"><span class="bar-label">WhatsApp</span><div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--green)"></div></div><span class="bar-val">33% +7pp</span></div>
+      <div class="bar-row"><span class="bar-label">YouTube</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--blue)"></div></div><span class="bar-val">28% +2pp</span></div>
+      <div class="bar-row"><span class="bar-label">TikTok</span><div class="bar-track"><div class="bar-fill" style="width:52%;background:var(--green)"></div></div><span class="bar-val">26% +3pp</span></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.5rem">X cayó 4pp. Más equilibrio entre plataformas que Perú (Facebook 61%).</p>
+    </div>
+    <div class="card">
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">TVN (canal estatal) declarado inviable financieramente. CNN Chile en reestructuración de deuda. Chilevisión vendido dos veces en 4 años. Corte de luz nacional (90% sin internet) confirmó que la radio AM/FM sigue siendo el medio de emergencia irreemplazable. Periodistas amenazados con interceptación de teléfonos en el "Audio Case".</p>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL -->
+<div id="panel-global" class="panel">
+
+  <div class="highlight-box">
+    <div class="hb-val" style="color:var(--green)">54%</div>
+    <div class="hb-label">usa redes sociales/video para noticias — por primera vez superan a webs de noticias (51%) y TV (52%)</div>
+  </div>
+  <div class="highlight-box blue">
+    <div class="hb-val" style="color:var(--red)">37%</div>
+    <div class="hb-label">confía en las noticias — mínimo histórico desde 2015. ↓ 3pp. Caídas de ≥5pp en 19 de 48 mercados</div>
+  </div>
+  <div class="highlight-box" style="background:var(--amber-soft);border-color:rgba(245,166,35,0.25)">
+    <div class="hb-val" style="color:var(--amber)">42%</div>
+    <div class="hb-label">evita las noticias · subió desde 29% en 2017</div>
+  </div>
+
+  <div class="section-label">Mayores caídas de confianza 2025→2026</div>
+  <div class="card">
+    <div class="bar-row"><span class="bar-label">Filipinas</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--red)"></div></div><span class="bar-val down">↓ 10pp</span></div>
+    <div class="bar-row"><span class="bar-label">Irlanda</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--red)"></div></div><span class="bar-val down">↓ 9pp</span></div>
+    <div class="bar-row"><span class="bar-label bold">Perú</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--red)"></div></div><span class="bar-val down">↓ 8pp</span></div>
+    <div class="bar-row"><span class="bar-label">Tailandia</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--red)"></div></div><span class="bar-val down">↓ 8pp</span></div>
+    <div class="bar-row"><span class="bar-label">Polonia</span><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--red)"></div></div><span class="bar-val down">↓ 8pp</span></div>
+    <div class="bar-row"><span class="bar-label">Colombia</span><div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--amber)"></div></div><span class="bar-val">↓ 7pp</span></div>
+    <div class="bar-row"><span class="bar-label">Brasil</span><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--amber)"></div></div><span class="bar-val">↓ 6pp</span></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:.5rem">Patrón común: inestabilidad política, elecciones divisivas, entorno informativo más fragmentado.</p>
+  </div>
+
+  <div class="section-label">IA chatbots para noticias — ranking</div>
+  <div class="card">
+    <div class="bar-row"><span class="bar-label">Corea del Sur</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--purple)"></div></div><span class="bar-val up">14% +7pp</span></div>
+    <div class="bar-row"><span class="bar-label">Brasil</span><div class="bar-track"><div class="bar-fill" style="width:93%;background:var(--purple)"></div></div><span class="bar-val up">13% +4pp</span></div>
+    <div class="bar-row"><span class="bar-label">Grecia</span><div class="bar-track"><div class="bar-fill" style="width:86%;background:var(--purple)"></div></div><span class="bar-val">12% +6pp</span></div>
+    <div class="bar-row"><span class="bar-label bold">Perú</span><div class="bar-track"><div class="bar-fill" style="width:78%;background:var(--purple)"></div></div><span class="bar-val up">11% +5pp</span></div>
+    <div class="bar-row"><span class="bar-label" style="color:var(--faint)">Global avg</span><div class="bar-track"><div class="bar-fill" style="width:71%;background:#555"></div></div><span class="bar-val flat">10% +3pp</span></div>
+    <div class="bar-row"><span class="bar-label">EE.UU.</span><div class="bar-track"><div class="bar-fill" style="width:43%;background:#555"></div></div><span class="bar-val flat">6% =</span></div>
+    <div class="bar-row"><span class="bar-label">Alemania</span><div class="bar-track"><div class="bar-fill" style="width:36%;background:#555"></div></div><span class="bar-val flat">5% =</span></div>
+    <div class="bar-row"><span class="bar-label">Reino Unido</span><div class="bar-track"><div class="bar-fill" style="width:29%;background:#555"></div></div><span class="bar-val flat">4% =</span></div>
+  </div>
+
+  <div class="section-label">Creadores e influencers</div>
+  <div class="metrics">
+    <div class="metric"><div class="m-label">Obtienen alguna noticia de creadores</div><div class="m-val">46%</div><div class="m-delta flat">cualquier tipo</div></div>
+    <div class="metric"><div class="m-label">Creadores de noticias específicos</div><div class="m-val">27%</div><div class="m-delta flat">global</div></div>
+    <div class="metric"><div class="m-label">Dependen mayoritariamente (Perú)</div><div class="m-val" style="color:var(--amber)">23%</div><div class="m-delta flat">vs 13% global</div></div>
+    <div class="metric"><div class="m-label">Solo creadores (sin medios trad.)</div><div class="m-val">3%</div><div class="m-delta flat">global</div></div>
+  </div>
+
+  <div class="section-label">Video y pagar por noticias</div>
+  <div class="metrics">
+    <div class="metric"><div class="m-label">Consumen video de noticias online</div><div class="m-val" style="color:var(--green)">77%</div><div class="m-delta flat">1.ª vez: todos los 48 mercados &gt;50%</div></div>
+    <div class="metric"><div class="m-label">TikTok para noticias en Perú</div><div class="m-val" style="color:var(--green)">45%</div><div class="m-delta flat">global: 20%</div></div>
+    <div class="metric"><div class="m-label">Pagan por noticias (cesta 20 países)</div><div class="m-val">17%</div><div class="m-delta flat">sin cambios · Noruega 40%</div></div>
+    <div class="metric"><div class="m-label">Prefieren noticias sin punto de vista</div><div class="m-val">48%</div><div class="m-delta down">↓ 3pp desde 2020</div></div>
+  </div>
+
+  <div class="gstat">
+    <div class="gstat-label">Preocupados por fake news</div>
+    <div class="gstat-val">62% <span style="font-size:14px;color:var(--amber)">↑ 4pp</span></div>
+    <div class="gstat-note">Sube en 11 mercados más de 5pp. Pero el uso de plataformas donde más circula también sube. La conveniencia supera a la preocupación.</div>
+  </div>
+
+  <div class="gstat">
+    <div class="gstat-label">Interés en noticias (2021→2026)</div>
+    <div class="gstat-val">↓ 13pp promedio global</div>
+    <div class="gstat-note">De 59% a 46%. Usuarios "casuales" subieron de 16% a 25%. Los "amantes de las noticias" bajaron de 29% a 22%.</div>
+  </div>
+</div>
+
+<!-- CONTEXTO -->
+<div id="panel-contexto" class="panel">
+  <div class="context red">
+    <div class="context-tag">Libertad de prensa · RSF pos. 144/180</div>
+    <div class="context-text">2025: el año más mortífero para el periodismo peruano en tres décadas. 4 periodistas asesinados, todos fuera de Lima. ANP registró 454 ataques adicionales. Candidato Rafael López Aliaga atacó públicamente al periodista Gustavo Gorriti. El TC anuló la condena de Daniel Urresti por el asesinato de Hugo Bustíos.</div>
+  </div>
+  <div class="context amber">
+    <div class="context-tag">Inestabilidad política · 3 presidentes desde oct 2025</div>
+    <div class="context-text">Dina Boluarte fue destituida. La sucedió el presidente del Congreso José Jerí, desplazado a los 4 meses por no revelar reuniones con empresarios chinos. Su sucesor José Balcázar se mantiene hasta julio 2026. Perú refuerza la percepción global de deterioro democrático.</div>
+  </div>
+  <div class="context">
+    <div class="context-tag">Propiedad mediática · Panamericana TV</div>
+    <div class="context-text">La familia Schütz vendió Panamericana Televisión al Grupo Paltarumi (minería) y la productora Susana Umbert, terminando 60+ años de propiedad familiar. Paltarumi también adquirió 50% de PBO. Dudas sobre independencia editorial en año electoral.</div>
+  </div>
+  <div class="context amber">
+    <div class="context-tag">Economía de medios · crisis en legado</div>
+    <div class="context-text">Grupo El Comercio S.A. quintuplicó sus pérdidas en 2025: resultado negativo de más de US$19M (ingresos cayeron 9,2%). La publicidad migra a plataformas digitales. Proyectos de innovación con IA: Funes (Ojo Público) para detectar corrupción, análisis de 36 currículos de candidatos (El Comercio).</div>
+  </div>
+  <div class="context purple">
+    <div class="context-tag">Creadores y campaña electoral</div>
+    <div class="context-text">Víctor Caballero 'Curwen' acumuló más de 3 millones de streams en YouTube reaccionando a seis debates presidenciales. Los candidatos apuestan por publicidad programática, redes sociales y formatos de entrevista blandos con influencers para esquivar el escrutinio periodístico.</div>
+  </div>
+  <div class="context green">
+    <div class="context-tag">IA en redacciones</div>
+    <div class="context-text">11% de peruanos usa chatbots de IA para noticias semanalmente (+5pp), por encima de EE.UU. (6%) y Alemania (5%). Herramientas: Funes (Ojo Público) detecta patrones de corrupción en contratos del Estado. El Comercio usó IA para analizar 36 hojas de vida y agendas de candidatos presidenciales.</div>
+  </div>
+</div>
+
+<!-- PREGUNTAS -->
+<div id="panel-preguntas" class="panel">
+  <div class="section-label">Para discutir — Perú</div>
+  <div class="card">
+    <div class="q-block"><div class="q-n">1</div><div class="q-text">Perú tiene la peor posición RSF de los 4 países (144/180) y la mayor caída de confianza (-8pp). ¿Son el mismo fenómeno o dos fenómenos distintos?</div></div>
+    <div class="q-block"><div class="q-n">2</div><div class="q-text">El 49% de los menores de 35 usa redes como fuente principal en un año con 6,7M de votantes primerizos. ¿Qué implica eso para la deliberación democrática?</div></div>
+    <div class="q-block"><div class="q-n">3</div><div class="q-text">Panamericana pasó de familia periodística a empresa minera en año electoral. ¿Qué preguntas le harías a un periodista que acepta trabajar ahí?</div></div>
+    <div class="q-block"><div class="q-n">4</div><div class="q-text">Perú usa más IA para noticias que EE.UU., Alemania y UK. ¿Es consecuencia de la desconfianza en medios tradicionales o hay otro factor?</div></div>
+  </div>
+
+  <div class="section-label">Para discutir — región</div>
+  <div class="card">
+    <div class="q-block"><div class="q-n">5</div><div class="q-text">Colombia tiene la confianza más baja (25%), similar a EE.UU. (25%), pero por razones distintas. ¿Qué explica que Latinoamérica esté por debajo del promedio global (37%)?</div></div>
+    <div class="q-block"><div class="q-n">6</div><div class="q-text">En Brasil, el presidente de La Silla Vacía no entrevista a streamers. En Colombia sí. En Perú, Curwen acumula 3M de streams en debates. ¿Qué patrón regional ves?</div></div>
+    <div class="q-block"><div class="q-n">7</div><div class="q-text">Chile tiene la mayor estabilidad de confianza (-2pp) pero la crisis financiera más visible en medios. ¿Puede un medio en quiebra mantener la confianza de su audiencia?</div></div>
+    <div class="q-block"><div class="q-n">8</div><div class="q-text">Facebook lidera en Perú (61%) e Instagram en Brasil (49%). ¿Por qué importa saber cuál plataforma domina? ¿Qué consecuencias editoriales tiene?</div></div>
+  </div>
+
+  <div class="section-label">Para discutir — global</div>
+  <div class="card">
+    <div class="q-block"><div class="q-n">9</div><div class="q-text">2026: redes sociales/video superan webs de noticias por primera vez a nivel global. ¿Cuándo ocurrirá o ya ocurrió ese cruce en Perú?</div></div>
+    <div class="q-block"><div class="q-n">10</div><div class="q-text">El 62% está preocupado por las fake news pero sigue usando las plataformas donde más circulan. ¿Qué dice ese comportamiento sobre cómo decidimos qué consumir?</div></div>
+    <div class="q-block"><div class="q-n">11</div><div class="q-text">El 48% prefiere noticias sin punto de vista (imparcialidad), pero solo el 37% confía en las noticias. ¿Cómo reconcilias esos dos datos?</div></div>
+    <div class="q-block"><div class="q-n">12</div><div class="q-text">El video en plataformas propias de los medios cayó 5pp. ¿Qué modelo debería seguir un medio peruano para no desaparecer del ecosistema de video?</div></div>
+  </div>
+
+  <div class="foot">DNR 2026 · Reuters Institute · Perú págs. 136–137 · Análisis: Lourdes M. Cueva Chacón, SDSU</div>
+</div>
+
+<script>
+function switchTab(btn, id) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function switchSub(btn, id) {
+  const parent = btn.closest('.panel');
+  parent.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
+  parent.querySelectorAll('.subpanel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sub-' + id).classList.add('active');
+}
+</script>
+</body>
+</html>
